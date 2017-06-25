@@ -1,5 +1,7 @@
 \documentclass{beamer}
 
+\usepackage{igo}
+
 \usetheme{Copenhagen}
 \usecolortheme{default}
 
@@ -21,8 +23,14 @@
     \frame{\titlepage}
 
     \begin{frame}
-        \frametitle{This is the first slide}
-        %Content goes here
+        \frametitle{Linear Go}
+        Go on an Nx1 board.
+        \bigskip
+        \white{e2,h2}
+        \black{g2,c2}
+        \begin{center}
+            \showgoban[b2,k2]
+        \end{center}
     \end{frame}
 
 \end{document}
