@@ -20,3 +20,11 @@ mktexlsr
 # verify install worked
 kpsewhich igo.sty
 kpsewhich igo10.mf
+
+
+
+
+# build the presentation
+latexmk lgo
+
+# then open lgo.pdf
