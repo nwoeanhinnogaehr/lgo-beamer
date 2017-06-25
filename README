@@ -1,0 +1,19 @@
+instructions for installing igo:
+
+Download from here: http://osl.ugr.es/CTAN/help/Catalogue/entries/igo.html
+unzip to /tmp/igo
+
+# install package
+mkdir -p /usr/share/texmf-dist/tex/latex/igo
+cp /tmp/igo/* /usr/share/texmf-dist/tex/latex/igo
+
+# install fonts
+mkdir -p /usr/share/texmf-dist/fonts/source/igo
+cp /tmp/igo/fonts/* /usr/share/texmf-dist/fonts/source/igo
+
+# rebuild database
+mktexlsr
+
+# verify install worked
+kpsewhich igo.sty
+kpsewhich igo10.mf
