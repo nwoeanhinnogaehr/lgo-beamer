@@ -26,23 +26,56 @@
         \frametitle{Linear Go}
         Go on an Nx1 board.
         \bigskip
-        \white{e2,h2}
-        \black{g2,c2}
+        % the monster
         \begin{center}
-            \showgoban[b2,k2]
+            \cleargoban
+            \black{c2,d2}
+            \white{f2,h2}
+            \showgoban[b2,j2]
         \end{center}
     \end{frame}
 
     \begin{frame}
         \frametitle{Motivation}
-        Cycles appear much more often on a linear board. So the game takes on a very different form.
-        No safe territory.
-        Predicting the outcome of long and complex cycles is essential to playing well.
+        \begin{itemize}[<+->]
+            \item There is no safe territory.
+            \item Cycles appear much more often on a linear board.
+            \item Predicting the outcome of long and complex cycles is essential to playing well.
+            \item todo...
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
         \frametitle{On rules}
-        We consider Tromp-Taylor with positional superko.
+        We consider no-suicide Tromp-Taylor rules with positional superko.
+        \bigskip
+        \begin{center}
+            \cleargoban
+            \showgoban[b2,h2]\\\medskip
+            \pause
+            \black{c2}
+            \showgoban[b2,h2]\\\medskip
+            \pause
+            \white{d2}
+            \showgoban[b2,h2]\\\medskip
+            \pause
+            \black{f2}
+            \showgoban[b2,h2]\\\medskip
+            \pause
+            \white{g2}
+            \showgoban[b2,h2]\\\medskip
+            \pause
+            \black{e2}
+            \clear{d2}
+            \showgoban[b2,h2]\\\medskip
+            \pause
+            \white{d2}
+            \clear{e2,f2}
+            \showgoban[b2,h2]\\\medskip
+            \pause
+            \black[\igocross]{f2}
+            \showgoban[b2,h2]\\\medskip
+        \end{center}
     \end{frame}
 
     \begin{frame}
@@ -57,9 +90,9 @@
 
     \begin{frame}
         \frametitle{Definitions}
-        \begin{itemize}
-            \item \textbf{Position}
-            \item \textbf{State}
+        \begin{itemize}[<+->]
+            \item \textbf{Position} A board configuration.
+            \item \textbf{State} A position, along with a set of positions that have been previously visited, and a flag to indicate whether the last move was a pass.
             \item \textbf{...}
         \end{itemize}
     \end{frame}
