@@ -24,7 +24,7 @@
 
     \begin{frame}
         \frametitle{Linear Go}
-        Go on an Nx1 board.
+        Go on an $Nx1$ board.
         \bigskip
         % the monster
         \begin{center}
@@ -37,17 +37,33 @@
 
     \begin{frame}
         \frametitle{Motivation}
+        Solving Go is hard. Maybe $Nx1$ Go is easier and can lead to intuition about NxM Go?
+        \begin{center}
+            \textbf{Not necessarily. Some unique challenges arise.}
+        \end{center}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Motivation}
         \begin{itemize}[<+->]
-            \item There is no safe territory.
-            \item Cycles appear much more often on a linear board.
+            \item Determine size of game graph vs number of cells on board.
+            \item Something about safety... be careful to word this accurately.
+            \item Cycles appear much more often on a linear board: ko rules play a more prominent role.
             \item Predicting the outcome of long and complex cycles is essential to playing well.
-            \item todo...
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Definitions}
+        \begin{itemize}[<+->]
+            \item \textbf{Position} A board configuration.
+            \item \textbf{State} A position, along with a set of positions that have been previously visited, and a flag to indicate whether the last move was a pass.
+            \item \textbf{...}
         \end{itemize}
     \end{frame}
 
     \begin{frame}
         \frametitle{On rules}
-        We consider no-suicide Tromp-Taylor rules with positional superko.
+        We consider Tromp-Taylor rules with positional superko, no suicide and no komi.
         \bigskip
         \begin{center}
             \cleargoban
@@ -74,27 +90,22 @@
             \showgoban[b2,h2]\\\medskip
             \pause
             \black[\igocross]{f2}
+            \black[\igotriangle]{b2}
             \showgoban[b2,h2]\\\medskip
         \end{center}
     \end{frame}
 
     \begin{frame}
         \frametitle{On rules}
-        Previous work used ...
+        Previous work by Erik van der Werf, \textit{Solving Go for Rectangular Boards},
+        describes a solver \textit{Migos} which uses different rules
+        and solves $Nx1$ Go for $N$ up to 12.\\\medskip
+        The rule set used by \textit{Migos} uses situational superko, and ... TODO
     \end{frame}
 
     \begin{frame}
         \frametitle{On rules}
         Difficulties in solving with positional superko
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Definitions}
-        \begin{itemize}[<+->]
-            \item \textbf{Position} A board configuration.
-            \item \textbf{State} A position, along with a set of positions that have been previously visited, and a flag to indicate whether the last move was a pass.
-            \item \textbf{...}
-        \end{itemize}
     \end{frame}
 
     \begin{frame}
@@ -119,6 +130,22 @@
         Empty board scores line up with Erik's work.
 
         We found scores for all opening moves on sizes up to 1x9.
+
+        \begin{figure}[th]
+        \begin{tabular}{|c|ccccccccc|} \hline
+        n & \multicolumn{9}{c|}{minimax value by 1st-move location} \\ \hline
+        2 & -2 & - &&&&&&& \\
+        3 & -3 & 3 & - &&&&&& \\
+        4 & -4 & 4 & - & - &&&&& \\
+        5 & -5 & 0 & 0 & - & - &&&& \\
+        6 & -6 & 1 & -1 & - & - & - &&&\\
+        7 & -7 &  2 & -2 & 2 & - & - & - &&\\
+        8 & -3 &  3 & -1 & 1 & - & - & - & - &\\
+        9 & -4 & 0  & -1  & 0 & 0 & - & - & - & -\\ \hline
+        \end{tabular}
+        \caption{Missing entries follow by left-right symmetry.}\label{fig:1st_move_value}
+        \label{fig:mmx}
+        \end{figure}
     \end{frame}
 
 \end{document}
