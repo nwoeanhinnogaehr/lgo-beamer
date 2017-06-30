@@ -63,7 +63,7 @@
 
     \begin{frame}
         \frametitle{On rules}
-        We consider Tromp-Taylor rules with positional superko, no suicide and no komi.
+        We consider Tromp-Taylor rules with positional superko, no suicide and no komi. Game ends after 2 consecutive passes.
         \bigskip
         \begin{center}
             \cleargoban
@@ -110,11 +110,11 @@
 
     \begin{frame}
         \frametitle{Our Goal}
-        Solve the game.
-
-        Determine minimax value for many board sizes and opening moves.
+        \begin{itemize}[<+->]
+            \item Determine minimax value for many board sizes and opening moves.
+            \item Understand some of the subtleties of Linear Go and develop intuition about how games progress.
+        \end{itemize}
     \end{frame}
-
 
     \begin{frame}
         \frametitle{Theorems \& other interesting results}
@@ -122,12 +122,156 @@
     \end{frame}
 
     \begin{frame}
+        \frametitle{Cell 2}
+        \begin{center}
+            \cleargoban
+            \black{c2}
+            \showgoban[b2,k2]\\\medskip
+        \end{center}
+        \begin{itemize}
+            \item We say the stone 2 away from the end of the board is in \textit{cell 2}.
+            \item \textbf{Conjecture 1.} If cells 1 and 2 have never been played
+                in then cell 2 is at least as good a move as cell 1.
+            \pause
+            \item This has been verified for $N \leq 7$. TODO what does this mean? Verified from what states? Surely we can construct a state in which this does not hold.
+            \pause
+            \item It is not trivial to prove in general because it is required to show that either there is always a path to the minimax value which does not depend on cell 1 being illegal due to superko, or that having cell 1 captured does not decrease the minimax value. ????
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{A weaker cell 2}
+        \begin{center}
+            \cleargoban
+            \black[1]{b2}
+            \white[2]{c2}
+            \showgoban[b2,k2]\ \ $\leq$
+            \cleargoban
+            \white[2]{c2}
+            \showgoban[b2,k2]
+        \end{center}
+        \begin{itemize}
+            \item \textbf{Theorem 2.} If cells 1 and 2 have never been played
+                in then passing is at least as good as playing in cell 1 and being immediately captured.
+            \pause
+            \item Proof sketch??
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Total states}
+        \begin{center}
+            \cleargoban
+            \black{c2,f2,g2,h2,k2,m2,n2}
+            \showgoban[b2,o2]\\\medskip
+            \cleargoban
+            \black{c2,d2,e2,g2,j2,l2,m2}
+            \showgoban[b2,o2]
+        \end{center}
+        \begin{itemize}
+            \item \textbf{Theorem 4.} In some cases where the board is filled with stones of a single color
+                except for a few gaps, we can conclude that the minimax value is $N$ because all attacks can
+                be perfectly countered.
+            \item Pruning these states prevents the solver from wasting time by \textit{filling it's own eyes}.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Loosely packed states}
+        \begin{itemize}
+            \item \textbf{Theorem 5.}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Telomeres}
+        \begin{itemize}
+            \item \textbf{Theorem 6, 7, 8.}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{Solver implementation}
+        We implemented a solver using alpha-beta search with
+        \begin{enumerate}
+            \item Iterative deepening
+            \item MTD($f$)
+            \item Transposition tables
+            \item Enhanced move ordering
+            \item Knowledge based pruning
+        \end{enumerate}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Iterative deepening}
+        \begin{itemize}
+            \item Perform many searches from the root while gradually increasing the depth cutoff.
+            \item Since we want to solve the game exactly, care must be taken to correctly propagate exactness
+                information up the tree: a node is exact iff the beta cutoff can be hit using some exact child,
+                all children are exact, or it is a endgame leaf.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{MTD($f$)}
+        \begin{itemize}
+            \item Performs a series of null-window alpha-beta searches until converging on the minimax value.
+            \item $f$ parameter is a guess which can improve convergence time.
+            \item Iterative deepening gives us good guesses early on, so MTD($f$) can converge quickly:
+                usually with less than two null-window searches.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Transposition tables}
+        We use two separate transposition tables:
+
+        A traditional $state \rightarrow bounds$ table and
+            a $board \rightarrow move\ ordering$ table.
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{$state \rightarrow bounds$ table}
+        \begin{itemize}
+            \item Table needs to be indexed by a complete state to be correct.
+            \item Difficult to implement efficiently and accurately because a state can be very
+                large and of variable size: we store history using either a bitset or hash table, selected by
+                board size.
+            \item In our experience it is only useful when an entry represents a significant amount
+                of work --- measured by subtree size --- and an exact node.
+            \item Prevents iterative deepening and MTD($f$) from repeating work.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{$board \rightarrow move\ ordering$ table}
+        \begin{itemize}
+            \item Searching \textit{good} children first can speed up alpha-beta search.
+            \item Good children are those that have:
+                \begin{itemize}
+                    \item Exact values: likely to be in the transposition table.
+                    \item High scores: likely to cause a beta cutoff.
+                    \item Small subtree size: estimated from previous iteration of iterative deepening.
+                \end{itemize}
+            \item These characteristics are chosen to minimize the time it takes to hit a beta cutoff.
+            \item It is faster to index this table by the board instead of the state, but we need some policy
+                to correct a possibly invalid move ordering because collisions can happen.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Knowledge based pruning}
+        \begin{itemize}
+            \item We use the theorems presented to prune nodes from the search.
+            \item Unfortunately, we found that some pruning theorems actually increase the search time
+                because they cause easily proven bounds to be skipped.
+            \item Useful pruning theorems were (2) cell 2, (4) total states and (5) loosely packed states.
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
         \frametitle{Results}
-        Empty board scores line up with Erik's work.
+        Empty board scores line up previous work by Van der Werf et al.
 
         We found scores for all opening moves on sizes up to 1x9.
 
