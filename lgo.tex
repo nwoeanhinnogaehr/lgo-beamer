@@ -53,16 +53,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Definitions}
-        \begin{itemize}[<+->]
-            \item \textbf{Position} A board configuration.
-            \item \textbf{State} A position, along with a set of positions that have been previously visited, and a flag to indicate whether the last move was a pass.
-            \item \textbf{...}
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{On rules}
+        \frametitle{Positional Linear Go}
         We consider Tromp-Taylor rules with positional superko, no suicide and no komi. Game ends after 2 consecutive passes.
         \bigskip
         \begin{center}
@@ -119,6 +110,14 @@
     \begin{frame}
         \frametitle{Theorems \& other interesting results}
         Cell 2, telomere, full board, stable board, etc. go in this section
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Definitions}
+        \begin{itemize}[<+->]
+            \item \textbf{Position} A board configuration.
+            \item \textbf{State} A position, along with a set of positions that have been previously visited, and a flag to indicate whether the last move was a pass.
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
@@ -214,6 +213,7 @@
     \begin{frame}
         \frametitle{Telomeres}
         \begin{itemize}
+            \item When an end of the board matches certain patterns, we can prune some moves or provide bounds.
             \item \textbf{Theorem 6, 7, 8.}
         \end{itemize}
     \end{frame}
