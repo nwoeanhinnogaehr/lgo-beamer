@@ -173,11 +173,11 @@
         \end{center}
         \begin{itemize}
             \item In some cases where the board is filled with stones of a single color
-                except for a few gaps, we call this board \textit{total}.
-            \item If the score of the current board is equal to the minimax value of the state,
+                except for a few gaps, we call this position \textit{total}.
+            \item If the score of the current position is equal to the minimax value of the state,
                 we call this state \textit{stable}.
             \pause
-            \item \textbf{Theorem 4.} All states with total boards are stable.
+            \item \textbf{Theorem 4.} All total positions are stable.
             \item Pruning total states prevents the solver from wasting time by filling it's own eyes.
         \end{itemize}
     \end{frame}
@@ -199,8 +199,8 @@
                 on the board. We call these states \textit{loosely packed}.
             \item \textbf{Theorem 5.} For $N\leq7$, all loosely packed states are stable.
             \pause
-            \item This does \textbf{not} extend to $N>7$. For example consider this board
-                where the score of the board is $+1$ but the minimax is $-1$:
+            \item This does \textbf{not} extend to $N>7$. For example consider this position
+                where the score of the position is $+1$ but the minimax is $-1$:
         \end{itemize}
         \begin{center}
             \cleargoban
@@ -255,7 +255,7 @@
         We use two separate transposition tables:
 
         A traditional $state \rightarrow bounds$ table and
-            a $board \rightarrow move\ ordering$ table.
+            a $position \rightarrow move\ ordering$ table.
     \end{frame}
 
     \begin{frame}
@@ -272,7 +272,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{$board \rightarrow move\ ordering$ table}
+        \frametitle{$position \rightarrow move\ ordering$ table}
         \begin{itemize}
             \item Searching \textit{good} children first can speed up alpha-beta search.
             \item Good children are those that have:
@@ -282,7 +282,7 @@
                     \item Small subtree size: estimated from previous iteration of iterative deepening.
                 \end{itemize}
             \item These characteristics are chosen to minimize the time it takes to hit a beta cutoff.
-            \item It is faster to index this table by the board instead of the state, but we need some policy
+            \item It is faster to index this table by the position instead of the state, but we need some policy
                 to correct a possibly invalid move ordering because collisions can happen.
         \end{itemize}
     \end{frame}
