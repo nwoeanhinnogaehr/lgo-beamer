@@ -125,17 +125,21 @@
         \frametitle{Cell 2}
         \begin{center}
             \cleargoban
+            \black{b2}
+            \showgoban[b2,k2]\ \ $\leq$
+            \cleargoban
             \black{c2}
-            \showgoban[b2,k2]\\\medskip
+            \showgoban[b2,k2]
         \end{center}
         \begin{itemize}
-            \item We say the stone 2 away from the end of the board is in \textit{cell 2}.
+            \item We say a stone $k$ away from an end of the board is in \textit{cell $k$}.
             \item \textbf{Conjecture 1.} If cells 1 and 2 have never been played
-                in then cell 2 is at least as good a move as cell 1.
+                in then playing in cell 2 is at least as good as playing in cell 1.
             \pause
-            \item This has been verified for $N \leq 7$. TODO what does this mean? Verified from what states? Surely we can construct a state in which this does not hold.
-            \pause
-            \item It is not trivial to prove in general because it is required to show that either there is always a path to the minimax value which does not depend on cell 1 being illegal due to superko, or that having cell 1 captured does not decrease the minimax value. ????
+            \item This has been verified for $N \leq 7$ by performing a search from the empty board which forks
+                to test both decisions.
+            \item It does not appear trivial to prove in general.
+            %\item It is not trivial to prove in general because it is required to show that either there is always a path to the minimax value which does not depend on cell 1 being illegal due to superko, or that having cell 1 captured does not decrease the minimax value. ????
         \end{itemize}
     \end{frame}
 
@@ -169,18 +173,42 @@
             \showgoban[b2,o2]
         \end{center}
         \begin{itemize}
-            \item \textbf{Theorem 4.} In some cases where the board is filled with stones of a single color
-                except for a few gaps, we can conclude that the minimax value is $N$ because all attacks can
-                be perfectly countered.
-            \item Pruning these states prevents the solver from wasting time by \textit{filling it's own eyes}.
+            \item In some cases where the board is filled with stones of a single color
+                except for a few gaps, we call this board \textit{total}.
+            \item If the score of the current board is equal to the minimax value of the state,
+                we call this state \textit{stable}.
+            \pause
+            \item \textbf{Theorem 4.} All states with total boards are stable.
+            \item Pruning total states prevents the solver from wasting time by filling it's own eyes.
         \end{itemize}
     \end{frame}
 
     \begin{frame}
         \frametitle{Loosely packed states}
+        \begin{center}
+            \cleargoban
+            \black{c2,e2}
+            \white{g2}
+            \showgoban[b2,h2]\\\medskip
+            \cleargoban
+            \black{c2}
+            \white{e2,f2}
+            \showgoban[b2,g2]
+        \end{center}
         \begin{itemize}
-            \item \textbf{Theorem 5.}
+            \item A similar argument to theorem 4 holds even when both players have stones
+                on the board. We call these states \textit{loosely packed}.
+            \item \textbf{Theorem 5.} For $N\leq7$, all loosely packed states are stable.
+            \pause
+            \item This does \textbf{not} extend to $N>7$. For example consider this board
+                where the score of the board is $+1$ but the minimax is $-1$:
         \end{itemize}
+        \begin{center}
+            \cleargoban
+            \black{c2,e2}
+            \white{g2,h2}
+            \showgoban[b2,j2]
+        \end{center}
     \end{frame}
 
     \begin{frame}
@@ -264,8 +292,8 @@
         \begin{itemize}
             \item We use the theorems presented to prune nodes from the search.
             \item Unfortunately, we found that some pruning theorems actually increase the search time
-                because they cause easily proven bounds to be skipped.
-            \item Useful pruning theorems were (2) cell 2, (4) total states and (5) loosely packed states.
+                in some cases because they cause easily proven bounds to be skipped.
+            \item Useful pruning theorems were those regarding cell 2, total states and loosely packed states.
         \end{itemize}
     \end{frame}
 
