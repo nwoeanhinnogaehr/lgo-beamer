@@ -45,16 +45,16 @@
     \begin{frame}
         \frametitle{Motivation}
         \begin{itemize}[<+->]
-            \item Determine size of game graph vs number of cells on board.
-            \item Something about safety... be careful to word this accurately.
-            \item Cycles appear much more often on a linear board: ko rules play a more prominent role.
+            \item Little previous work on Nx1 Go.
+            \item No known unconditionally alive local patterns which are not dependent on ko rules.
+            \item Cycles appear much more often on a linear board.
             \item Predicting the outcome of long and complex cycles is essential to playing well.
         \end{itemize}
     \end{frame}
 
     \begin{frame}
         \frametitle{Positional Linear Go}
-        We consider Tromp-Taylor rules with positional superko, no suicide and no komi. Game ends after 2 consecutive passes.
+        We consider Tromp-Taylor rules aka the Logical rules with no suicide and positional superko. Game ends after 2 consecutive passes.
         \bigskip
         \begin{center}
             \cleargoban
@@ -88,35 +88,52 @@
 
     \begin{frame}
         \frametitle{On rules}
-        Previous work by Erik van der Werf, \textit{Solving Go for Rectangular Boards},
+        Previous work by Erik van der Werf et al. titled \textit{Solving Go for Rectangular Boards},
         describes a solver \textit{Migos} which uses different rules
-        and solves $Nx1$ Go for $N$ up to 12.\\\medskip
-        The rule set used by \textit{Migos} uses situational superko, and ... TODO
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{On rules}
-        Difficulties in solving with positional superko
+        and solves $Nx1$ Go for $N$ up to 12.
     \end{frame}
 
     \begin{frame}
         \frametitle{Our Goal}
         \begin{itemize}[<+->]
-            \item Determine minimax value for many board sizes and opening moves.
-            \item Understand some of the subtleties of Linear Go and develop intuition about how games progress.
+            \item Develop theory about Linear Go.
+            \item Develop understanding about how to play Linear Go.
+            \item Determine exact minimax values for many board sizes and opening moves.
         \end{itemize}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Theorems \& other interesting results}
-        Cell 2, telomere, full board, stable board, etc. go in this section
+        \frametitle{Theory of Positional Linear Go}
+        Our initial attempt at creating a solver for Positional Linear Go was ineffective, solving only
+        up to size 1x6. To improve this, we sought to develop theory which we could use to enhance the
+        search process.
     \end{frame}
 
     \begin{frame}
         \frametitle{Definitions}
-        \begin{itemize}[<+->]
+        \begin{itemize}
             \item \textbf{Position} A board configuration.
             \item \textbf{State} A position, along with a set of positions that have been previously visited, and a flag to indicate whether the last move was a pass.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Preliminaries: Empty board pass}
+        \begin{itemize}
+            \item \textbf{Theorem 3.} If the first player passes from the empty board, their minimax score is negated.
+            \item Proof: use strategy stealing.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Preliminaries: Empty board score}
+        \begin{itemize}
+            \item \textbf{Theorem 1.} The first-player empty-board minimax score is non-negative.
+            \item Proof: Assume score is negative. Take the first move to be
+                pass. If the opponent passes, the game ends with a score of
+                0. If the opponent does not pass, then their minimax score is
+                negative by our assumption. So they prefer to pass, giving a
+                score of 0. The score is then non-negative. Contradiction.
         \end{itemize}
     \end{frame}
 
@@ -157,7 +174,7 @@
             \item \textbf{Theorem 2.} If cells 1 and 2 have never been played
                 in then passing is at least as good as playing in cell 1 and being immediately captured.
             \pause
-            \item Proof sketch??
+            \item Proof idea: Any optimal strategy for the variant where black is captured can be used for the variant where black passes.
         \end{itemize}
     \end{frame}
 
@@ -178,6 +195,7 @@
                 we call this state \textit{stable}.
             \pause
             \item \textbf{Theorem 4.} All total positions are stable.
+            \item Proof idea: All moves by the opponent are either single-cell suicide or immediately put into atari.
             \item Pruning total states prevents the solver from wasting time by filling it's own eyes.
         \end{itemize}
     \end{frame}
@@ -200,14 +218,16 @@
             \item \textbf{Theorem 5.} For $N\leq7$, all loosely packed states are stable.
             \pause
             \item This does \textbf{not} extend to $N>7$. For example consider this position
-                where the score of the position is $+1$ but the minimax is $-1$:
+                where the score of the position is $-1$ but the minimax $+1$:
+                \begin{center}
+                    \cleargoban
+                    \black[1]{c2}
+                    \black[3]{d2}
+                    \white[2]{h2}
+                    \white[4]{f2}
+                    \showgoban[b2,j2]
+                \end{center}
         \end{itemize}
-        \begin{center}
-            \cleargoban
-            \black{c2,e2}
-            \white{g2,h2}
-            \showgoban[b2,j2]
-        \end{center}
     \end{frame}
 
     \begin{frame}
@@ -233,7 +253,7 @@
     \begin{frame}
         \frametitle{Iterative deepening}
         \begin{itemize}
-            \item Perform many searches from the root while gradually increasing the depth cutoff.
+            \item We perform many searches from the root while gradually increasing the depth cutoff.
             \item Since we want to solve the game exactly, care must be taken to correctly propagate exactness
                 information up the tree: a node is exact iff the beta cutoff can be hit using some exact child,
                 all children are exact, or it is a endgame leaf.
@@ -243,7 +263,7 @@
     \begin{frame}
         \frametitle{MTD($f$)}
         \begin{itemize}
-            \item Performs a series of null-window alpha-beta searches until converging on the minimax value.
+            \item We perform a series of null-window alpha-beta searches until converging on the minimax value.
             \item $f$ parameter is a guess which can improve convergence time.
             \item Iterative deepening gives us good guesses early on, so MTD($f$) can converge quickly:
                 usually with less than two null-window searches.
@@ -291,8 +311,8 @@
         \frametitle{Knowledge based pruning}
         \begin{itemize}
             \item We use the theorems presented to prune nodes from the search.
-            \item Unfortunately, we found that some pruning theorems actually increase the search time
-                in some cases because they cause easily proven bounds to be skipped.
+            \item Unfortunately, we found that some pruning theorems increase the search time
+                in certain cases because they cause easily proven bounds to be skipped.
             \item Useful pruning theorems were those regarding cell 2, total states and loosely packed states.
         \end{itemize}
     \end{frame}
@@ -318,6 +338,12 @@
         \caption{Missing entries follow by left-right symmetry.}\label{fig:1st_move_value}
         \label{fig:mmx}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \begin{center}
+            {\huge Q\&A}
+        \end{center}
     \end{frame}
 
 \end{document}
