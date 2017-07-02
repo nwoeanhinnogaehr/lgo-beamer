@@ -233,9 +233,50 @@
     \begin{frame}
         \frametitle{Telomeres}
         \begin{itemize}
-            \item When an end of the board matches certain patterns, we can prune some moves or provide bounds.
-            \item \textbf{Theorem 6, 7, 8.}
+            \item When the ends of the board meet certain criteria, we can prune some moves or provide bounds.
+            \item Each end has different requirements:
+                \begin{itemize}
+                    \item The chain at the split point between the two sides must have two liberties.
+                    \item One side must contain stones of only a single color $x$ matching one of a set of patterns. Furthermore the pattern cannot have appeared in the same location previously during the game.
+                    \item $x$ must have no legal moves on the other side.
+                \end{itemize}
         \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Telomeres: Theorem 7}
+            \begin{figure}
+            {\small\tt
+            \begin{tabular}{llc}
+            complement & prune & lower bound on $\mu_x$ \\
+            \tt
+            (--] & (**] & {$n$} \\
+            (o-] & (o*] & {$n$} \\
+            (---]& (*-*] &  {$n-5$} \\
+            (o--]& (o**] &  {$n$} \\
+            (-o-]& (*o*] &  {$n-5$} \\
+            (--o]& (oo*] &  {$n$}\\
+            (----]& (*--*]&  {$n-7$} \\
+            (o---]& (o***]&  {$n$} \\
+            (-o--]& (*o-*]&  {$n-7$} \\
+            (--o-]& (*-o*]&  {$n-7$}\\
+            (---o]& (oo-*]&  {$n-5$}\\
+            (o-o-]& (o-o*]&  {$n-5$}\\
+            (-oo-]& (-oo-]&  ?\\
+            (ooo-]& (ooo*]&  {$n-5$}\\
+            (-----]& (*----]& ? \\
+            (o----]& (o****]& {$n$} \\
+            \end{tabular}
+            }
+            \caption{Pruning and bounds for Theorem~\ref{thm:tel3}. * cells pruned. ? no bound.}
+            \label{fig:tel3}
+            \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Telomeres: Theorems 6 and 8}
+        In the cases of \texttt{(-o-]} and \texttt{(-o-o-]}, we can often reach a stronger conclusion: \\\medskip
+        The minimax score of the state is at least the score of the position.
     \end{frame}
 
     \begin{frame}
