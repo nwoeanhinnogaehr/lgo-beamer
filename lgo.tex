@@ -113,7 +113,7 @@
         \frametitle{Definitions}
         \begin{itemize}
             \item \textbf{Position} A board configuration.
-            \item \textbf{State} A position, along with a set of positions that have been previously visited, and a flag to indicate whether the last move was a pass.
+            \item \textbf{State} A position, along with a set of positions that have been previously visited, and a flag to indicate whether the last move was a pass and the current player to move.
         \end{itemize}
     \end{frame}
 
@@ -155,7 +155,6 @@
             \item This has been verified for $N \leq 7$ by performing a search from the empty board which forks
                 to test both decisions.
             \item It does not appear trivial to prove in general.
-            %\item It is not trivial to prove in general because it is required to show that either there is always a path to the minimax value which does not depend on cell 1 being illegal due to superko, or that having cell 1 captured does not decrease the minimax value. ????
         \end{itemize}
     \end{frame}
 
@@ -232,14 +231,21 @@
 
     \begin{frame}
         \frametitle{Telomeres}
+        \begin{center}
+            \cleargoban
+            \white{c2}
+            \black{e2,g2,h2,m2,k2,l2}
+            \showgoban[b2,n2]
+        \end{center}
         \begin{itemize}
             \item When the ends of the board meet certain criteria, we can prune some moves or provide bounds.
-            \item Each end has different requirements:
-                \begin{itemize}
-                    \item The chain at the split point between the two sides must have two liberties.
-                    \item One side must contain stones of only a single color $x$ matching one of a set of patterns. Furthermore the pattern cannot have appeared in the same location previously during the game.
-                    \item $x$ must have no legal moves on the other side.
-                \end{itemize}
+            \item Here, white need not play into cell 1 or cell 3, because that will only further decrease it's score. So we find a lower bound of $N-5$ for black.
+            %\item Each end has different requirements:
+                %\begin{itemize}
+                    %\item The chain at the split point between the two sides must have two liberties.
+                    %\item One side must contain stones of only a single color $x$ matching one of a set of patterns. Furthermore the pattern cannot have appeared in the same location previously during the game.
+                    %\item $x$ must have no legal moves on the other side.
+                %\end{itemize}
         \end{itemize}
     \end{frame}
 
@@ -268,7 +274,7 @@
             (o----]& (o****]& {$n$} \\
             \end{tabular}
             }
-            \caption{Pruning and bounds for Theorem~\ref{thm:tel3}. * cells pruned. ? no bound.}
+        \caption{Pruning and bounds for Theorem 7. * cells pruned. ? no bound.}
             \label{fig:tel3}
             \end{figure}
     \end{frame}
